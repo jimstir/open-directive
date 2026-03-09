@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Subscribe - Open Directive</title>
+  <link rel="stylesheet" href="report.css">
+  <link rel="stylesheet" href="subscribe.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <aside class="sidebar">
+    <div class="logo" id="homeBtn">
+      <div class="logo-icon">🛡️</div>
+      <span>Open Directive</span>
+    </div>
+    <nav>
+      <a href="report.html" class="nav-button" id="reportsBtn">
+        <span>📊</span>
+        <span>View My Reports</span>
+      </a>
+      <a href="#" class="nav-button" id="validatorBtn">
+        <span>✅</span>
+        <span>Become a Validator</span>
+      </a>
+      <a href="#" class="nav-button" id="aboutBtn">
+        <span>ℹ️</span>
+        <span>About</span>
+      </a>
+      <a href="subscribe.html" class="nav-button" id="subscribeSidebarBtn">
+        <span>💳</span>
+        <span>Subscribe</span>
+      </a>
+    </nav>
+    <div class="wallet-section">
+      <button id="connectWalletBtn" class="wallet-btn">Connect Wallet</button>
+      <div id="walletInfo" class="wallet-info"></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <h1>Subscription</h1>
+      <p>Access premium features and support decentralized security analysis.</p>
+    </div>
+
+    <div class="report-card" style="max-width: 500px; margin: 0 auto;">
+      <div class="report-header">
+        <h2 class="report-title">Subscribe to Open Directive</h2>
+      </div>
+      <div class="price-section">
+        <span>Current Price: </span><span id="currentPrice" class="detail-value">Loading...</span>
+      </div>
+      <form id="subscribeForm">
+        <div class="detail-item" style="margin-bottom: 24px;">
+          <div class="detail-label">Amount</div>
+          <input type="number" id="amountInput" min="1" required class="premium-input">
+        </div>
+        <button type="submit" id="subscribeBtn" class="new-report-btn" style="margin-top: 0;">Subscribe</button>
+      </form>
+      <div id="subscribeStatus" class="status-msg"></div>
+    </div>
+  </main>
+  <script src="subscribe.js"></script>
+</body>
+
+</html>

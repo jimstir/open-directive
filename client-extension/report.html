@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Open Directive - Reports</title>
+  <link rel="stylesheet" href="report.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo" id="homeBtn">
+      <div class="logo-icon">🛡️</div>
+      <span>Open Directive</span>
+    </div>
+    <nav>
+      <a href="#" class="nav-button" id="reportsBtn">
+        <span>📊</span>
+        <span>View My Reports</span>
+      </a>
+      <a href="#" class="nav-button" id="validatorBtn">
+        <span>✅</span>
+        <span>Become a Validator</span>
+      </a>
+      <a href="#" class="nav-button" id="aboutBtn">
+        <span>ℹ️</span>
+        <span>About</span>
+      </a>
+      <a href="subscribe.html" class="nav-button" id="subscribeSidebarBtn">
+        <span>💳</span>
+        <span>Subscribe</span>
+      </a>
+    </nav>
+    <div class="wallet-section">
+      <button id="connectWalletBtn" class="wallet-btn">Connect Wallet</button>
+      <div id="walletInfo" class="wallet-info"></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <h1>Security Analysis Report</h1>
+      <p>Comprehensive smart contract security analysis for decentralized applications</p>
+    </div>
+
+    <div class="report-card">
+      <div class="report-header">
+        <h2 class="report-title">Latest Analysis</h2>
+        <span class="report-status">Secure</span>
+      </div>
+
+      <div class="report-details">
+        <div class="detail-item">
+          <div class="detail-label">Website Analyzed</div>
+          <div class="detail-value">example-dapp.com</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Report CID</div>
+          <div class="detail-value">QmMockCID1234567890</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Submitted By</div>
+          <div class="detail-value">0xAgentAddress</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Analysis Date</div>
+          <div class="detail-value">2026-03-06 12:34 UTC</div>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <h3 class="summary-title">Security Summary</h3>
+        <p class="summary-text">
+          No critical vulnerabilities found. The smart contract implementation follows industry best practices with proper access controls and secure coding patterns. Minor recommendations include implementing additional input validation and enhancing the event logging mechanism.
+        </p>
+      </div>
+
+      <button class="new-report-btn" id="newReportBtn">📋 Generate New Report</button>
+    </div>
+  </main>
+  <script src="report.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Guard Request - Loading</title>
+  <link rel="stylesheet" href="report.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .loading-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 48px;
+    }
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 6px solid #ffd600;
+      border-top: 6px solid #23272f;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 32px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #ffd600;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px #23272f;
+      margin-top: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo" id="homeBtn">
+      <div class="logo-icon">🛡️</div>
+      <span>Open Directive</span>
+    </div>
+    <nav>
+      <a href="#" class="nav-button" id="reportsBtn">
+        <span>📊</span>
+        <span>View My Reports</span>
+      </a>
+      <a href="#" class="nav-button" id="validatorBtn">
+        <span>✅</span>
+        <span>Become a Validator</span>
+      </a>
+      <a href="#" class="nav-button" id="aboutBtn">
+        <span>ℹ️</span>
+        <span>About</span>
+      </a>
+    </nav>
+    <div class="wallet-section">
+      <button id="connectWalletBtn" class="wallet-btn">Connect Wallet</button>
+      <div id="walletInfo" class="wallet-info"></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="header">
+      <h1>Guard Request</h1>
+      <p>Starting security analysis workflow...</p>
+    </div>
+    <div class="loading-section">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">LOADING, PLEASE WAIT...</p>
+    </div>
+  </main>
+  <script src="loading.js"></script>
+</body>
+</html>

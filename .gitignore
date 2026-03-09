@@ -1,0 +1,31 @@
+# Prototype
+docs/
+verifier_workflow.yaml
+anaylst-workflow.yaml
+client-extension/deploy.js
+client-extension/deploy.html
+client-extension/deploy.css
+client-extension/connecting.html
+contracts/verifierReward.sol
+# Node and browser extension dependencies
+node_modules/
+.DS_Store
+*.log
+
+
+# OS and editor files
+*.swp
+*.swo
+.vscode/
+.env
+
+# Build outputs
+/dist/
+/build/
+
+# Misc
+*.tmp
+*.bak
+
+# Private agent tools
+agent/tools/
