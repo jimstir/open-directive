@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.20;
 
 import "./interfaces/IOpenDirective.sol";
@@ -14,6 +15,7 @@ contract SiteRecord {
         address submitter;
         uint256 time; // time of report submission
         uint256 submitNum; // number of submission
+        uint256 reportNum;
     }
     
     uint256 private _currentAnalystNum; // The current analyst report number
@@ -23,6 +25,7 @@ contract SiteRecord {
     address private _verifier; // verifer address??
     uint256 private _reportNum; // the current validator report number
     IOpenDirective private _direct;
+    bytes32 public approvedRoot; // root for all verifed validator submission(track timestamp?)
      
     // analyst
     mapping(uint256 => Report) public analystReport;
@@ -47,7 +50,7 @@ contract SiteRecord {
     function checkValidator(address user) public view returns(bool){
         return _direct.userDeposit(user, _proposal) > 0;
     }
-    
+
     // Get owner
     function getOwner() external view returns (address) {
         return _owner;
@@ -80,7 +83,9 @@ contract SiteRecord {
         Report storage r = verifierReport[submitNum];
         return (r.data, r.submitter, r.time);
     }
-    // validator check verifier status, if approved and/or choosen for update
+    // validator check verifier status, if approved and/or choosen for update, 
+    // approve = false is rejected, true = valid submission but may not need to update latest report
+    // update = true = update latest report, false = no update latest report
     function checkStatus(uint256 reportNum) external view returns(bool approved, bool update) {
         return (verifiedApproved[reportNum], verifiedUpdate[reportNum]);
     }
@@ -108,17 +113,27 @@ contract SiteRecord {
         require(checkValidator(msg.sender));
         require(amount > 100);
         
-        _reportNum += 1;
+        // add lock??
+        _reportNum = _reportNum + 1;
         bytes32 hash = keccak256(abi.encodePacked(data));
         Report storage rep = validatorReport[_reportNum][_currentAnalystNum];
         _direct.proposalDeposit(amount, msg.sender, _proposal);
         rep.data = hash;
         rep.submitter = msg.sender;
         rep.time = block.timestamp;
+        rep.reportNum = _reportNum;
         emit ValidatorReportAdded(_reportNum, msg.sender, hash, amount, block.timestamp);
         return _reportNum;
     }
+
+    // add verifier update record
+    function updateRoot(bytes32 rootHash) external onlyOwners returns(bytes32){
+        approvedRoot = rootHash;
+        return rootHash;
+    }
     /**  Add report by verifier agent
+    ****** Check how recent the lastestReview request was and
+    ***** implement rewards for updates go to this proposal if were recent, like this month over two months,
     * @param submitNum the current reportNum being verified
     */
     function addVerifierReport(string calldata data, uint256 submitNum, bool update, bool approved) external {
@@ -135,4 +150,8 @@ contract SiteRecord {
         emit VerifierReportAdded(submitNum, msg.sender, hash, update, approved, block.timestamp);
     }
 
+    //expose provider
+    function expose() external pure returns(bool){
+        return true;
+    }
 }

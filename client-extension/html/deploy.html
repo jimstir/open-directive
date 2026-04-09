@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deploy Contracts (Fuji)</title>
+  <link rel="stylesheet" href="../css/deploy.css">
+</head>
+<body>
+  <!-- Wallet status banner at the top -->
+  <div id="walletBanner" class="wallet-info">No wallet connected</div>
+
+  <div class="deploy-container">
+    <div class="wallet-section">
+      <button id="createBtn" class="wallet-btn">Connect Wallet</button>
+      <div id="walletInfo" class="wallet-info">No wallet connected</div>
+    </div>
+    
+    <h2>Deploy Contracts to Avax Fuji Testnet</h2>
+    <button id="deployOpenDirective">Deploy OpenDirective</button>
+    <button id="deploySiteRecord">Deploy SiteRecord</button>
+    <button id="deploySubscription">Deploy Subscription</button>
+    <button id="deployVerifierRewards">Deploy VerifierRewards</button>
+    <button id="deployDirectiveToken">Deploy DirectiveToken</button>
+    <div id="status"></div>
+  </div>
+  <script src="../js/deploy.js"></script>
+</body>
+</html>

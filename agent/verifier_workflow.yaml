@@ -1,0 +1,29 @@
+name: Verifier Workflow
+steps:
+  - name: Verify a New Review
+    description: |
+      Call "seacrh_for_duplicate".
+      If true, return "Rejected", continue to step 4.
+      Continue to step 2.
+    tool: verify_request
+  - name: Extract Information
+    description: |
+      Call 'download_site_data'.
+      Call 'find_app'.
+      If false, call `deploy_site_record`.    
+      Call `export_contract` using the provided URL.
+      If false, respond with:
+        "Sorry, no smart contracts found at the moment. We will take a look at this at a later time.",
+        end workflow.
+      Continue to Step 3.
+    tool: extract_contract_addresses
+  - name: Recreate Vulnerabilities
+    description: |
+      Call 'store_new_vulnerbilities'.
+      Call 'try_exploit'.
+      Continue to Step 4.
+    tool: try_vuln
+  - name: Submit Results
+    description: |
+      Call 'submit_results'.
+      End workflow.

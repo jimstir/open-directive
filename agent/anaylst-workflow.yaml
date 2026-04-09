@@ -1,0 +1,41 @@
+name: Web3 Anaylst Workflow
+steps:
+  - name: Guard Report Request
+    description: |
+      Call `check_User_Subscription` to get subscription authorization.
+      If false, end workflow.
+      Call `check_recent_review`.
+      If false, call `send_recent_report`, end workflow.
+      Continue to step 2.
+    tool: verify_request
+  - name: Extract Information
+    description: |
+      Call 'download_site_data'.
+      Call 'find_app'.
+      If false, call `deploy_site_record`.    
+      Call `export_contract` using the provided URL.
+      If false, respond with:
+        "Sorry, no smart contracts found at the moment. We will take a look at this at a later time.",
+        end workflow.
+      Continue to Step 3.
+    tool: extract_contract_addresses
+  - name: Create Review
+    description: |
+      You are a smart contract security auditor looking to protect real users.
+      Use the inputs from `export_contract` to create a security analysis on the application.
+      The sturcuture of the report sections include:
+        1. First section, "Recommendations For You", is a simple explation of the findings that may effect the end-user if they were to use the web3 application.
+        Generate this section targeting the end-user, not towards the developer who needs to fix the vulnerabilites.
+        Example apporaches that will not be the same, so use all inputs to create a conculsion :
+          - Vulnerabilites like Critical, High should most likly be not a safe app for the user, if true simply explain to the user.
+          - Vulnerabilites like Medium, Low or Informational may or may not be safe, maybe recommend the user take causion.
+        2. The the following section can list the vunlnerabilites in technical detail.
+      Always explain how you generated your conculsion.
+      Continue to step 4.
+    tool: create_analysis
+  - name: Sumbit Analysis
+    description: |
+      Call `submit_update`
+      End workflow.
+    tool: submit_reports
+

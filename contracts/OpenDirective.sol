@@ -172,7 +172,7 @@ contract OpenDirective is ERC4626, ReentrancyGuard {
     // get the proposalNumber
     function urlProposalNum(bytes32 url) external view returns(uint256){
         bytes32 hash = keccak256(abi.encodePacked(url));
-        return urlProposal[url];
+        return urlProposal[hash];
     }
 
     // Check if URL already has proposal

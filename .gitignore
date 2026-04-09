@@ -1,12 +1,9 @@
 # Prototype
-docs/
-verifier_workflow.yaml
-anaylst-workflow.yaml
 client-extension/deploy.js
 client-extension/deploy.html
 client-extension/deploy.css
 client-extension/connecting.html
-contracts/verifierReward.sol
+
 # Node and browser extension dependencies
 node_modules/
 .DS_Store
@@ -22,6 +19,8 @@ node_modules/
 # Build outputs
 /dist/
 /build/
+/artifacts
+/cache
 
 # Misc
 *.tmp

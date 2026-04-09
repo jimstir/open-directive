@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect Wallet & Deploy</title>
+  <link rel="stylesheet" href="../css/report.css">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"></script>
+</head>
+<body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:none;">
+  <main class="main-content" style="max-width:420px;width:100%;margin:auto;box-shadow:0 24px 60px rgba(15,23,42,0.18),0 0 0 1px rgba(148,163,184,0.08);border-radius:18px;background:rgba(255,255,255,0.03);padding:40px 32px;">
+    <div class="header">
+      <h1 style="font-size:2.2em;font-weight:700;margin-bottom:12px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Connect your wallet</h1>
+      <p class="subtitle" style="color:#a0a0b8;font-size:18px;">Connect wallet to continue</p>
+    </div>
+    <div id="walletAddress" class="wallet-info" style="margin-bottom:18px;">No wallet connected</div>
+    <button id="connectWalletBtn" class="wallet-btn" style="margin-bottom:18px;">Connect Wallet</button>
+    <button id="deployBtn" class="new-report-btn" style="margin-bottom:18px;">Deploy</button>
+    <div id="status" style="margin-bottom:12px;"></div>
+    <div id="walletInfo" class="wallet-info"></div>
+  </main>
+
+  <script src="../js/connecting.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Open Directive - Reports</title>
+  <link rel="stylesheet" href="../css/report.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo" id="homeBtn">
+      <div class="logo-icon">🛡️</div>
+      <span>Open Directive</span>
+    </div>
+    <nav>
+      <a href="report.html" class="nav-button" id="reportsBtn">
+        <span>📊</span>
+        <span>View My Reports</span>
+      </a>
+      <a href="validator.html" class="nav-button" id="validatorBtn">
+        <span>✅</span>
+        <span>Become a Validator</span>
+      </a>
+      <a href="about.html" class="nav-button" id="aboutBtn">
+        <span>ℹ️</span>
+        <span>About</span>
+      </a>
+      <a href="subscribe.html" class="nav-button" id="subscribeSidebarBtn">
+        <span>💳</span>
+        <span>Subscribe</span>
+      </a>
+    </nav>
+    <div class="wallet-section">
+      <button id="connectWalletBtn" class="wallet-btn">Connect Wallet</button>
+      <div id="walletInfo" class="wallet-info"></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="header" style="display:flex;align-items:center;gap:24px;">
+      <h1 style="margin-right:16px;">Analyst Agent Report</h1>
+      <button class="new-report-btn" id="generateReportBtn" style="margin-left:auto;">📋 Generate Report</button>
+    </div>
+    <div class="report-card" id="reportCardLoading">
+      <div class="empty-state">
+        <h3>Loading report...</h3>
+        <p>Please wait while we fetch your latest report.</p>
+      </div>
+    </div>
+  </main>
+  <script src="../js/config.js"></script>
+  <script src="../js/report.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+.deploy-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.deploy-container h2 {
+  margin-bottom: 24px;
+  color: #333;
+}
+.deploy-container button {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background: #4e8ef7;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.deploy-container button:hover {
+  background: #357ae8;
+}
+#status {
+  margin-top: 24px;
+  font-size: 15px;
+  color: #222;
+}
