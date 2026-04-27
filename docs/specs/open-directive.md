@@ -9,15 +9,16 @@ contributors: Jimmy <@jimstir>
 
 ## Abstract
 
-This document describes the Open Directive protocol.
-The protocol defines a mechanism to report and verify web3 application security analysis.
+This document describes the different components for the Open Directive system.
+The system allows an operator to launch their own decentralized auditing service on-chain.
 
-## Background/Motivation
+## Motivation
 
 Web3 applications are facing the grow problem of safety from their services.
-Applications with resoruces conduct smart contract audits before launching the service,
+Applications with resoruces conduct smart contract security audits before launching the service,
 but these applications are still open to expliots.
 
+The Open Directive system is a decentralized reporting system
 The Open Directive brings security directly to the user of the application.
 The user shouldn't have to believe some service that the proper security audits have been conducted.
 Instead, the user could verify for themselves, even non-techincal users.
@@ -34,8 +35,9 @@ human validator reporting can improve how users protect themselves within the fa
 ### Terminology
 
 - `owner`: The defined address on the tokenized reserve.
-- provider: The owner of the agent resoources being offered to the service.
+- operator: The owner of the agent resoources being offered to the service.
 - validator: A white hat security researcher submiting security reports.
+- verifier: Any participant wanting to help expose a malicious operator.
 - `directiveToken`: The token assigned to the ERC7425 reserve.
 
 ## Specification
@@ -43,39 +45,53 @@ human validator reporting can improve how users protect themselves within the fa
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to be interpreted as described in
 [RFC 2119](http://tools.ietf.org/html/rfc2119).
 
-The system uses a LLM, large language model, for reasioning to generate security anaylsis reports.
-This reproting is done by the anaylst agent.
-The provider SHOULD provide the anaylst agent with a set of tools to contruct the reports.
-Security anaylsis reports MAY not be 100% percent accurate,
-so users in the system keep this in mind.
-Also, a provider MAY provide what tools are being used to generate inputs for the agent,
-but the system does not verify this.
-This means even if the `provider` shares some information,
-the provider is free to make changes at any time without sharing the details of the updates.
+The system uses a LLM, large language model, for reasioning to generate anaylsis reports.
+This reporting SHOUOLD be generated with inputs from a set of tools and
+other external factors related to the use case.
+The operator MUST share the status of their LLM at the time of request.
+Anaylsis reports MAY not be completely accurate,
+so users in the system should be aware each report may need improvements.
+Also, a operator MAY keep the details of each tool being used private,
+as the system MAY not verify each tool use.
+This means even if the operator shares some details,
+the operator is free to make changes to the tool at any time in the agent's lifecycle,
+without sharing any updates to the system.
 
-The Open Directive has users become subscribers by paying a subscription fee on-chain through a smart contract.
-A user SHOULD have a subscription before sending a request or
-having access to reports in the system.
-This MUST be enforced by the `provider` and is RECOMMENDED to implement for the subscription system.
-This specifcation assumes that subscriptions are enforced.
+In system, users are able to request anaylsis reports from agents they do not operate,
+while trusting the results are genuine.
+A user SHOULD have an open subscription before sending a report request or
+to have access to current reports in the system.
+This MUST be enforced by the operator and
+is RECOMMENDED to support the system's incentive mechanism.
 If not enforced, the system could be effected by spam reports,
 lack of incentives to imporve reports and
-the potential missed opportunity in the system to understand which applications have the most demand for new reports.
-To implement, it is RECOMMENDED to encrypt data before submission.
-For information on submission see the [tokenized reserve](#tokenized-reserve) section.
+missing status of most demand for new reports.*
+It is RECOMMENDED for operators and validators to encrypt reports before submission.
+Submission details are discussed further in the [tokenized reserve](#tokenized-reserve) section.
 
 ### Subscription
 
-All subscription fees SHOULD be collected on the subscription contract.
-Fees are deposited in monthly sets/rounds/..
-THe `owner` has access to 50% f each monthly rounds/sets/recurring.
+All subscription fees SHOULD be collected by the subscription smart contract.
+The monthly price MUST be declared on-chain by the operator.
+The operator MAY update this at any time.
+At the time of subscription,
+the user MAY pay any amount at the on-chain registered price.
+The `directiveToken` is the RECCOMENDED default token for subscription fees.
+Collected fees are owned by the subscription contract.
+
+To withdraw funds, the operator MUST execute the transfer of all tokens owned by the contract.
+For all withdrawals, 50% of the tokens owned by the subscription token MUST be transfered to the owner.
+The other 50% MUST be transfered to the tokenized reserve contract. More details are discuss in the  
+[tokenized reserve](#tokenized-reserve).
+
+The fees collected are equally distributed between the provider and validators to promote an equal relationship in the system.
 
 The subscription smart contract SHOULD define the following:
 
 ```js
 
     "SubscriptionContract" : {
-        "reserveAddress" : address
+        "reserveAddress" : address // the address of the tokenized reserve contract
         "setPrice" : int // set a new price
         "subscriptionStatus": bool // the current subscription status of a user
 
@@ -83,19 +99,21 @@ The subscription smart contract SHOULD define the following:
     
 ```
 
-The subscribtion contract SHOULD be treated as a tokenized reserve [policy](#na) and
-define the `reserveAddress` making it public.
+The subscribtion contract SHOULD be treated as a tokenized reserve [policy](https://eips.ethereum.org/EIPS/eip-7425).
 
 Each review by the anaylst agent SHOULD be requested by a subscriber.
-Subscribers MAY use a local client to make requests or
-providers can implement automatic review mechanisms.
+The operator decides how to receive request from subscribers.
 Depending on the resources given to the anaylst agent,
-reviews are not REQUIRED for every user visit.
-It is up to the `provider` to provide information about how reviews are conducted.
+reviews are not REQUIRED for every request.
+The operator MUST be transaparent about when a report was generated on a user interface.
+In a malicious scenrio,
+the interface controlled by an operator may present old reports to subscribers.
 
 ### Analyst Agent WorkFlow
 
-The analyst agent RECOMMENDED workflow:
+The agent workflow MAY be made public to help validators conduct better reports.
+This transparentacy allows validator to verify that the operator conducted a throurow report.**
+The RECOMMENDED analyst agent workflow:
 
 ```yaml
 
@@ -118,6 +136,14 @@ steps:
       Use `security_reasoning` to interpret the inputs.
       Continue to next step.
     tool: security_reasoning
+  - name: Check Validators
+    description: |
+      Iterate the new validator submissions from on-chain references.
+      Collect all new value data presented by validators and record valuable alidator contributions.
+      Add important data to report.
+      Create timestamped validator rewards attestation.
+      Continue to next step.
+    tool: validator_check
   - name: Generate Report
     description: |
       Call `generate_report`
@@ -134,50 +160,69 @@ steps:
 
 ### Tokenized Reserve
 
-The Open Directive MUST implement a tokenized reserve to
-manages each all the report submissions.
-The tokenized reserve allows user to view the reporting chain,
-incentives validators with a fair reward metric and
+The Open Directive system MUST implement a tokenized reserve as the core contract to
+manage report submissions.
+
+#### Token Issance
+
+The tokenized reserve allow users to view the report history chain,
+incentives validators to make submissions and
 helps lower the submission of spam reports.
+The `directiveToken` is the default token for the Open Directive system.
+During initizalation of the system, the `owner` SHOULD deploy the `directiveToken` at a fixed rate.
+Once deployed, the entire should be deposited into a liquidity pool creaitng LP, liquidity pool, tokens.
+These tokens MUST be sent to the tokenized reserve.
+This will lock the LP tokens in the reserve,
+not allowing the `owner` to access.
 
-Each web3 application that is given a `proposalNum` using the `proposalOpen`.
-A record contract address SHOULD be defined.
-The record contract will hold the chain of submissions from validators, the anaylst agent and verifiers.
-Since the address is defined in the tokenized reserve,
-users MUST be able to directly access this information.
+#### Reporting
 
-The `owner` is responsible for assigning one `proposalNum` for each application.
-If the `owner` does not outline clear `proposalOpen` guidelines,
-user clients MAY not receive the correct latest reports.
-Also validators MAY submit new reports to a `proposalNum` that did not get any review requests.
+Reports are linked together into a history of related submissions.
+The report chain are identified with the `proposalNum`.
+A record contract address SHOULD be declared on each `proposalOpen`.
+The record contract will hold the chain of submissions from validators,
+the anaylst agent and verifiers.
 
-The opened proposal will manage validator deposits.
-Validator's report MUST be submited with a `proposalDeposit` of a predefined amount of the `directiveToken`.
+The `owner` is responsible for assigning one `proposalNum` for each report chain.
+If the `owner` does not outline clear `proposalOpen` creation guidelines,
+the user's client could not locate the desired latest report.
+Also validators MAY submit new reports to an incorrect `proposalNum`,
+which would be an unrelated submission history chain.
+
+The `proposalNum` MUST be used by validators to make `directiveToken` deposits into the reserve when making submissions.
+
+A validator's report MUST be submited through the `proposalDeposit`.
+The `owner` should declare the defined amount per depsoit.
 For more information on validators, see the following section.
 
-A separate proposal is RECOMENDED to be created define the subscription policy for the Open Directive.
-All policies SHOULD define a opened proposalNum from the tokenized reserve.
+It is RECOMENDED to create a separate proposal to declare the subscription policy on the Open Directive contract.
+All policies SHOULD declare a opened `proposalNum` from the tokenized reserve.
 
-### Validators and Verifiers
+### Validators
 
-A validator acts as a white hat security researcher assiting the analyst agent on improving reports.
+A validator acts as an independnt analyst assiting the analyst agent on improving reports.
 Analyst agent reports are not considered 100% correct,
 as agents can hallucinate, justify misleading vulnerabilities,
 present incorrect vulnerabilities, and other mistakes.
-A verifier agent is a provider resource that publicly shares the open source tools it uses to verify that a validator submission is valid.
 To be classified as a validator in the system,
-a user MUST transfer the `directiveToken` to the opened proposal a report submission will be made for.
-Validators are in competition to recieve rewards for report submissions.
+a user MUST transfer the `directiveToken` to the opened proposal the report submission is made for.
+Validators are in competition to recieve rewards that a finalized by the analyst agent.
 To prevent validators from submitting duplicate vunderability reports to the system,
+essentially spamming the network,
 token deposits SHOULD be used as winning weight for awarding rewards.
-The more the validator deposits for a `proposalNum`,
-the higher chance the validator of having their approved report rewarded over others.
-This helps lower spam as each submission needs tokens.
-Validators with lower resources can win rewards in request that are less popoular,
-meaning the larger validator would not put resources towards it.
+The higher the validator deposits for a `proposalNum`,
+the greater chance the validator will have their approved report rewarded over other approved reports.
+The anaylst agent must verfiy that the report is benficial.
+This approach aims to lower spam as each submission needs tokens.
+Validators may concentrate token deposits at reports that are popoular, get alot of reports,
+or if there are other incentives presented.
+This will constrain large token holders to certain report chains,
+while smaller token holders can compete in other reporting chains for rewards.
+
 The analyst agent will be given a set of improved reports from validators,
-but will choose some data as inputs for the next report request.
-Future work will introduce pools, where users and devlopers could place any amount of `directiveToken` owned by a proposal to support higher rewards and better quaility reports from validators.
+but MAY choose some of that data as inputs for the next generated report.
+Future work can introduce pools, where users and
+project teams could place extra `directiveToken` rewards to attract more independent reviews to the projects.
 
 The RECOMMENDED information included in validator reports are:
 
@@ -205,56 +250,51 @@ The RECOMMENDED information included in validator reports are:
 
 ```
 
-Submissions not following a known format MAY NOT BE considered for reward distributions.
-The format MAY be updated over time to meet the required constraints.
+Submissions by validators not following an operator's reccomendations MAY NOT be considered for reward distributions.
+The operator is resposible for these guidelines and operators can exclude any validator.
+These guidelines MAY be updated over time to meet the required constraints.
 
 Submissions are only referenced on-chain with a Keccak-256 hash.
-The hash MAY represent of any address format referencing location of the submission.
-It is RECOMMENDED that the `provider` have methods for validators to submit encrypted reports that are retrieveable by the verifier agent and the analyst agent.
-It is RECOMMENDED to use protocols like IPFS to store the CID,
-content identifers, for each report submitted by all roles.
-When validator reports are encrypted,
-this deteurs the validator's competition from submitting duplicate findings.
+The hash MAY represent any address format referencing the location of the submission.
+It is RECOMMENDED that the operator support methods for validators to submit encrypted reports that are retrieveable by their anaylst agent or other verifier agents.
+It is RECOMMENDED to use decentralized storage solutions to store the data,
+Validator reports are encrypted,
+to deteur their competition from submitting duplicate findings.
 
-Verifier agents SHOULD do a review of validator submission to classify them as valid.
+Verifier agents MAY do a review of validator submission to classify them as valid along side the main anaylst agent.
 The verifier SHOULD find duplicate submissions, spam submission with releavant information,
 and any other malicious validator activity.
 The system currently does not punish a validator for malicious activity,
-so punishing a validator is the resposiblity of the provider.
+so the operator MAY add guidelines to penalize validators.
 User's SHOULD NOT have access to validator reports,
-as these reports should be verifed to not display unneccary information to the user.
-Validators are meant to assist the `provider` in creating good security analysis,
-while displaying transparent activity to the user that there is validators participating.
+as these reports should be verifed as not spam or malicious.
+Validators aim to assist the operator to create good analysis reports,
+while presenting the transparent activity of the system to all participants.
 
-The `provider` is the orchrator of all components within the system,
-as it is required for them to attract users.
-The `provider` is incentives to conduct the system to standard as the reputation plays a large role in attracting future users and validator help.
-When a provider acts maliciously,
-like favoring some validator reports over others,
-the validator has the option to `expose the provider.
+The operator is the orchestrator of all components within the system.
+Since it is there responisibitly to attract validators and users,
+the operator is incentives to conduct the system to standard.
+Reputation plays a large role in attracting future users and validators.
+When a operator acts maliciously,
+like favoring a few validator reports over others,
+the validator has the option to expose the operator.
 
 #### Validator Expose
 
-When a validator notices that their reports are not getting rewarded properly,
-they can do an investegation in the open directive system.
+If a validator notices that their reports are not being rewarded properly,
+they can suggest an investegation on the operator.
 The tokenized reserve records every activity,
-which the validator can utilize to see if the `provider` is malicious.
+which the validator can utilize to expose the operator of malicious activity.
 Once a validator has evidence, they can provide keys to unencrypt their reports.
-They also submit an expose flag that users SHOULD be able to view.
-Users can then use their own verifier shared from the publicly known open source tooling,
-to confirm the expose report.
-Future work can include this verifier with the client, so users do not need to conduct this themselves.
+They also submit an expose flag that other parties MUST be able to view.
+Users can then use their own methods to,
+to confirm the expose investagration.
+If the investagation is true, the operator's repuation MAY be ruined on-chain thoruhg expose reports.
+Future work can introduce open soucre verifier protocols with incentives.
 
-### Fee distributions
+### Benchmark and RFC
 
-Clients SHOULD pay a subscription fee to use the system.
-A subscription is paid to a policy controlled by the reserve based on a price decided by the owner.
-The collection of fees SHOULD be equally distributed between the provider and validators as they are contributing equally to the service.
-
-The 50% validator portion is also distributed by the provider.
-It is the resposiblitiy for the provider to distribute token fairly,
-as validators hold the power to `expose which could lead to losing subscribers.
-All distribution SHOULD be conducted in a policy owned by the reserve keep activity open to all roles in the system.
+...
 
 ## Copyright
 
