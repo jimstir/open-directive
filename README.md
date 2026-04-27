@@ -1,3 +1,6 @@
+
+> **Note:** This project is a work in progress and under active development.
+
 # Open Directive
 
 The Open Directive is a reporting system that utilizes tokenized reserves to manage reports and incentives. A decentralized solution that can imporve operations like smart contract security auditing activity.
