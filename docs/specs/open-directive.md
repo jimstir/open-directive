@@ -7,6 +7,8 @@ contributors: Jimmy <@jimstir>
 
 ---
 
+- Share encryption key with vaildators
+
 ## Abstract
 
 This document describes the different components of the Open Directive system.

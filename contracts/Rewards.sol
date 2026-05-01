@@ -66,18 +66,13 @@ contract Rewards {
         return MerkleProof.verify(proof, balanceRoot, leaf);
     }
 
-    // Get if 
-    // owner take reward
-    function ownerReward() external onlyOwner returns(uint256){
-
-    }
     // verifier take reward
     function validatorReward() external returns (uint256){
         require(msg.sender == _verifier);
 
     }
 
-    // Send rewards to validators
+    // Owner send rewards
     function sendReward(address recipient, uint256 amount, uint256 reportNum) external onlyOwner {
         require(_token.balanceOf(address(this)) >= 100, "Insufficient balance on contract");
         require(amount < _maxReward);

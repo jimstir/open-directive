@@ -11,14 +11,17 @@ contract Subscription {
     using SafeERC20 for IERC20;
     
     event PriceSet(uint256 price);
+    event Liqudated(uint256 amount);
     event Subscribed(address indexed user, uint256 months, uint256 amount);
 
     IERC20 private _token;
     uint256 private _monthlyPrice;
     address private _owner;
+    address private _verifier;
     uint256 private _proposal;
     uint256 _count; // number of subscribers;
     IPriceOracle private _oracle;
+    address private _rewards; // the contract address of the Rewards contract
 
     struct UserSub {
         uint256 paidMonths;
@@ -30,7 +33,7 @@ contract Subscription {
      
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner");
+        require(msg.sender == _owner, "Only owner");
         _;
     }
 
@@ -40,9 +43,15 @@ contract Subscription {
         _owner = msg.sender;
         _proposal = proposal;
     }
-    //Get proposal number of OpenDirective policy
-    function getProposal() external returns(uint256){
+    // Get proposal number of OpenDirective policy to
+    // Allows users to verify this subscription belongs to the correct reserve
+    function getProposal() external view returns(uint256){
         return _proposal;
+    }
+
+    //Get the rewards contract address
+    function getRewards() external view returns(address){
+        return _rewards;
     }
     // Get total of tokens owned by service
     function tokensOwned() external view returns(uint256){
@@ -70,7 +79,7 @@ contract Subscription {
     function setOracle(address oracleAddr) external onlyOwner {
         _oracle = IPriceOracle(oracleAddr);
     }
-    // Change verifier address
+    // Change verifier address if needed
     function verifierAddrs(address verifier) external onlyOwner returns(address){
         _verifier = verifier;
         return _verifier;
@@ -121,5 +130,17 @@ contract Subscription {
         emit Subscribed(msg.sender, months, amount);
     }
 
+    //withdarw all funds collected, owner address get 50% other 50% goes to Rewards contract
+    function liqudate() external onlyOwner returns(uint256){
+        uint256 num = _token.balanceOf(address(this));
+        require( num > 1000);
+        
+        _token.transferFrom(address(this), _rewards, num/2);
+        num = _token.balanceOf(address(this));
+        _token.transferFrom(address(this), msg.sender, num);
+        
+        emit Liqudated(num);
+        return(num);
+    }
     
 }
