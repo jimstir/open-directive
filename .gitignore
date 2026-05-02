@@ -27,4 +27,5 @@ node_modules/
 *.bak
 
 # Private agent tools
-agent/tools/
+agent/tools/anaylst-workflow.yaml
+agent/tools/verifier_workflow.yaml

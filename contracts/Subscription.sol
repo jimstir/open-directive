@@ -18,7 +18,7 @@ contract Subscription {
     uint256 private _monthlyPrice;
     address private _owner;
     address private _verifier;
-    uint256 private _proposal;
+    uint256 private _directive;
     uint256 _count; // number of subscribers;
     IPriceOracle private _oracle;
     address private _rewards; // the contract address of the Rewards contract
@@ -37,16 +37,16 @@ contract Subscription {
         _;
     }
 
-    constructor(address tokenAddress, uint256 initialPrice, uint256 proposal) {
+    constructor(address tokenAddress, uint256 initialPrice, uint256 direct) {
         _token = IERC20(tokenAddress);
         _monthlyPrice = initialPrice;
         _owner = msg.sender;
-        _proposal = proposal;
+        _directive = direct;
     }
     // Get proposal number of OpenDirective policy to
     // Allows users to verify this subscription belongs to the correct reserve
     function getProposal() external view returns(uint256){
-        return _proposal;
+        return _directive;
     }
 
     //Get the rewards contract address

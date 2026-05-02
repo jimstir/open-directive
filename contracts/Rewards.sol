@@ -11,18 +11,16 @@ contract Rewards {
     address private _owner;
     uint256 private _maxReward;
     IERC20 private _token;
-    bytes32 public balanceRoot;
 
-    struct RewardRecord {
-        address recipient;
-        uint256 amount;
-        uint256 reportNum;
-    }
+    // Merkle root history
+    bytes32[] public balanceRoots;
 
-    RewardRecord[] public rewards;
+    // Track user withdrawals per root: user => rootIndex => amount withdrawn
+    mapping(address => mapping(uint256 => uint256)) public withdrawn;
 
-    event RewardSent(address indexed recipient, uint256 amount, uint256 reportNum);
-    event RootUpdated(bytes32 indexed newRoot);
+    // ...existing code...
+    event RootUpdated(bytes32 indexed newRoot, uint256 indexed rootIndex);
+    event Withdrawn(address indexed user, uint256 indexed rootIndex, uint256 amount);
 
     modifier onlyOwner() {
         require(msg.sender == _verifier || msg.sender == _owner, "Only verifier or owner can send rewards");
@@ -34,15 +32,7 @@ contract Rewards {
         _token = token;
         _owner = owner;
     }
-    // get the number of rewards sent
-    function getRewardCount() external view returns (uint256) {
-        return rewards.length;
-    }
-    // Get the Reward Record
-    function getRewardRecord(uint256 index) external view returns (address, uint256, uint256) {
-        RewardRecord storage r = rewards[index];
-        return (r.recipient, r.amount, r.reportNum);
-    }
+    // ...existing code...
     // Get the total amount of tokens owned by rewards service
     function totalRewards()external view returns(uint256){
         return(_token.balanceOf(address(this)));
@@ -53,10 +43,51 @@ contract Rewards {
         _maxReward = max;
     }
 
-    // Update merkle root for reward distribution
+    // Update merkle root for reward distribution (pushes new root)
     function updateRoot(bytes32 newRoot) external onlyOwner {
-        balanceRoot = newRoot;
-    emit RootUpdated(newRoot);
+        balanceRoots.push(newRoot);
+        emit RootUpdated(newRoot, balanceRoots.length - 1);
+    }
+
+    // Get the latest root index
+    function latestRootIndex() public view returns (uint256) {
+        require(balanceRoots.length > 0, "No roots set");
+        return balanceRoots.length - 1;
+    }
+
+    // Verify a user's balance in a given root
+    function verifyBalance(address user, uint256 balance, bytes32[] calldata proof, uint256 rootIndex) public view returns (bool) {
+        require(rootIndex < balanceRoots.length, "Invalid root index");
+        bytes32 leaf = keccak256(abi.encode(user, balance));
+        return MerkleProof.verify(proof, balanceRoots[rootIndex], leaf);
+    }
+
+    // Withdraw rewards using latest root, with differential logic
+    function withdraw(uint256 balance, bytes32[] calldata proof) external {
+        uint256 rootIdx = latestRootIndex();
+        require(verifyBalance(msg.sender, balance, proof, rootIdx), "Invalid proof for latest root");
+
+        uint256 prevRootIdx = rootIdx > 0 ? rootIdx - 1 : 0;
+        uint256 prevWithdrawn = withdrawn[msg.sender][prevRootIdx];
+        uint256 alreadyWithdrawn = withdrawn[msg.sender][rootIdx];
+
+        // Calculate withdrawable: balance in latest root - amount withdrawn since previous root
+        uint256 withdrawable = balance;
+        if (rootIdx > 0) {
+            // User may have withdrawn from previous root
+            withdrawable = balance > prevWithdrawn ? balance - prevWithdrawn : 0;
+        }
+        // Subtract any already withdrawn for this root
+        if (alreadyWithdrawn >= withdrawable) {
+            revert("Nothing to withdraw");
+        }
+        uint256 amount = withdrawable - alreadyWithdrawn;
+        require(amount > 0, "Nothing to withdraw");
+        require(_token.balanceOf(address(this)) >= amount, "Insufficient contract balance");
+
+        withdrawn[msg.sender][rootIdx] += amount;
+        _token.safeTransfer(msg.sender, amount);
+        emit Withdrawn(msg.sender, rootIdx, amount);
     }
     // Get balance, when withdrawn through merkle proof update withdrawal amount(or user amount withdrawn/ track addresses)
     // Or set reward amount for each root set, every validator is paid equally based on current reward pool
@@ -66,23 +97,5 @@ contract Rewards {
         return MerkleProof.verify(proof, balanceRoot, leaf);
     }
 
-    // verifier take reward
-    function validatorReward() external returns (uint256){
-        require(msg.sender == _verifier);
-
-    }
-
-    // Owner send rewards
-    function sendReward(address recipient, uint256 amount, uint256 reportNum) external onlyOwner {
-        require(_token.balanceOf(address(this)) >= 100, "Insufficient balance on contract");
-        require(amount < _maxReward);
-        require(recipient != address(0), "Invalid recipient");
-        require(amount > 0, "Amount must be positive");
-        
-        _token.safeTransfer(recipient, amount);
-
-        rewards.push(RewardRecord({recipient: recipient, amount: amount, reportNum: reportNum}));
-        emit RewardSent(recipient, amount, reportNum);
-    }
 
 }

@@ -53,7 +53,7 @@ contract SiteRecord {
         _owner = owner;
         // If a second authorized address is required
         _agent = agent;
-        // The tokenized reserve contract
+        // The OpenDirective contract
         _direct = direct;
     }
 
@@ -123,7 +123,7 @@ contract SiteRecord {
     function addKeys(bytes memory key) external onlyOwners returns(bytes32){
         _key = key;
     }
-    // Add report by AI agent
+    // Add a new analyst report
     function addAnalystReport(string calldata data) external {
         require(msg.sender == _owner);
 
