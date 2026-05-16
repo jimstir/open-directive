@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+/**  SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -18,7 +18,6 @@ contract Rewards {
     // Track user withdrawals per root: user => rootIndex => amount withdrawn
     mapping(address => mapping(uint256 => uint256)) public withdrawn;
 
-    // ...existing code...
     event RootUpdated(bytes32 indexed newRoot, uint256 indexed rootIndex);
     event Withdrawn(address indexed user, uint256 indexed rootIndex, uint256 amount);
 
@@ -32,7 +31,7 @@ contract Rewards {
         _token = token;
         _owner = owner;
     }
-    // ...existing code...
+
     // Get the total amount of tokens owned by rewards service
     function totalRewards()external view returns(uint256){
         return(_token.balanceOf(address(this)));
@@ -89,13 +88,14 @@ contract Rewards {
         _token.safeTransfer(msg.sender, amount);
         emit Withdrawn(msg.sender, rootIdx, amount);
     }
-    // Get balance, when withdrawn through merkle proof update withdrawal amount(or user amount withdrawn/ track addresses)
+      Get balance, when withdrawn through merkle proof update withdrawal amount(or user amount withdrawn/ track addresses)
     // Or set reward amount for each root set, every validator is paid equally based on current reward pool
     function getBalance( address user, uint256 balance, bytes32[] calldata proof) external view returns (bool){
 
         bytes32 leaf = keccak256(abi.encode(user, balance));
         return MerkleProof.verify(proof, balanceRoot, leaf);
     }
-
+    
 
 }
+*/

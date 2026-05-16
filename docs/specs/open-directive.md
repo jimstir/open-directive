@@ -115,7 +115,7 @@ the interface controlled by an operator may present old reports to subscribers.
 
 The agent workflow MAY be made public to help validators conduct better reports.
 This transparency allows the validator to verify that the operator conducted a thorough report.**
-The RECOMMENDED analyst agent workflow:
+An example workflow of a security analyst agent:
 
 ```yaml
 
@@ -293,7 +293,7 @@ Users can then use their own methods to confirm the exposure investigation.
 If the investigation is true, the operator's reputation MAY be ruined on-chain through expose reports.
 Future work can introduce open-source verifier protocols with incentives.
 
-### Benchmark and RFC
+### Benchmarks
 
 ...
 

@@ -20,5 +20,4 @@ describe("VerifierRewards", function () {
     expect(directiveToken.target).to.be.properAddress;
   });
 
-  // Add more tests for VerifierRewards contract logic here
 });

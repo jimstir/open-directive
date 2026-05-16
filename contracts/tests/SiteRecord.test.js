@@ -20,5 +20,5 @@ describe("SiteRecord", function () {
     expect(directiveToken.target).to.be.properAddress;
   });
 
-  // Add more tests for SiteRecord contract logic here
+
 });
